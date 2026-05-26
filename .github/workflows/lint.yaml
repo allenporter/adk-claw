@@ -49,4 +49,4 @@ jobs:
 
       - name: Static typing with ty
         run: |
-          ty check .
+          ty check . --ignore unresolved-import

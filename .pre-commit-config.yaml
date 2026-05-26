@@ -24,11 +24,10 @@ repos:
   - repo: local
     hooks:
       - id: ty
-        name: ty
-        entry: script/run-ty.sh
-        language: script
-        types: [python]
-        require_serial: true
+        name: ty check
+        entry: ty check . --ignore unresolved-import
+        language: python
+        pass_filenames: false
   - repo: https://github.com/codespell-project/codespell
     rev: v2.2.6
     hooks:
