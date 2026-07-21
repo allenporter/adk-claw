@@ -125,10 +125,14 @@ class ProgressTracker:
                             pass
                     except discord.errors.HTTPException as e:
                         if e.code == 50035:
-                            logger.error("Discord rejected send (too long) even after chunking")
+                            logger.error(
+                                "Discord rejected send (too long) even after chunking"
+                            )
                             try:
                                 tiny_chunk = chunk[:1000] + "\n... (hard truncated)"
-                                self._current_message = await self._channel.send(tiny_chunk)
+                                self._current_message = await self._channel.send(
+                                    tiny_chunk
+                                )
                             except Exception:
                                 pass
                         else:
