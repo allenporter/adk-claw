@@ -19,5 +19,5 @@ uvicorn==0.41.0
 starlette==0.52.1
 mcp==1.28.1
 aiosqlite==0.22.1
-google-adk==1.36.1
+google-adk==1.36.2
 adk-coder==0.1.4
