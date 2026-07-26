@@ -1,7 +1,8 @@
 """Tests for Discord channel adapter."""
 
-import pytest
 from unittest.mock import AsyncMock, MagicMock
+
+import pytest
 
 from adk_claw.gateway.discord import DiscordAdapter, _split_message
 

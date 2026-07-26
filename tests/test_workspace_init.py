@@ -1,7 +1,7 @@
 from adk_claw.workspace_init import (
+    assemble_instructions,
     initialize_global_brain,
     initialize_session_workspace,
-    assemble_instructions,
 )
 
 

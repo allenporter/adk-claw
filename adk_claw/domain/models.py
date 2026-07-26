@@ -1,8 +1,9 @@
-import uuid
 import enum
+import uuid
 from dataclasses import dataclass, field
+from datetime import UTC, datetime
 from typing import Any
-from datetime import datetime, timezone
+
 from pydantic import BaseModel, Field
 
 
@@ -25,7 +26,7 @@ class InboundMessage:
     )
     channel_id: str = "default"
     content: str = ""
-    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
     metadata: dict[str, Any] = field(default_factory=dict)
 
     @property
@@ -60,5 +61,5 @@ class OrchestratorEvent:
     type: EventType
     content: Any
     message_id: str | None = None
-    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
     metadata: dict[str, Any] = field(default_factory=dict)

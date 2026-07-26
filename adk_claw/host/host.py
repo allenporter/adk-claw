@@ -14,6 +14,7 @@ import logging
 import os
 from collections.abc import AsyncIterator
 from pathlib import Path
+from typing import Any
 
 from adk_claw.binding.fakes import InMemoryBindingTable
 from adk_claw.config import ClawConfig, load_config
@@ -23,10 +24,9 @@ from adk_claw.domain.models import (
     OrchestratorEvent,
     WorkspaceContext,
 )
+from adk_claw.host.queue.manager import QueueManager
 from adk_claw.runtime import Runtime
 from adk_claw.runtime.embedded import EmbeddedRuntime
-from adk_claw.host.queue.manager import QueueManager
-from typing import Any
 
 logger = logging.getLogger(__name__)
 

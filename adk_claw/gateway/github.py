@@ -1,3 +1,5 @@
+import subprocess
+
 """
 GitHub Pull Request Adapter.
 
@@ -8,8 +10,7 @@ and routes them to the adk-claw host.
 import asyncio
 import json
 import logging
-import subprocess
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from adk_claw.domain.models import EventType
 from adk_claw.host.host import ClawHost
@@ -33,7 +34,7 @@ class GithubAdapter:
         self._pr_number = pr_number
         self._allowed_authors = allowed_authors or []
         self._interval = interval
-        self._last_checked = datetime.now(timezone.utc)
+        self._last_checked = datetime.now(UTC)
         self._running = False
         self._task: asyncio.Task[None] | None = None
 
@@ -64,8 +65,8 @@ class GithubAdapter:
         while self._running:
             try:
                 await self._poll()
-            except Exception as e:
-                logger.exception(f"Error polling GitHub: {e}")
+            except Exception:
+                logger.exception("Error polling GitHub")
             await asyncio.sleep(self._interval)
 
     async def _poll(self) -> None:
@@ -86,7 +87,7 @@ class GithubAdapter:
                 stderr=asyncio.subprocess.PIPE,
             )
             stdout, stderr = await process.communicate()
-        except Exception as e:
+        except OSError as e:
             logger.error(f"Failed to execute gh CLI: {e}")
             return
 
@@ -128,7 +129,7 @@ class GithubAdapter:
         self, comment: dict, newest_timestamp: datetime, is_review: bool = False
     ) -> datetime:
         created_at_str = comment["createdAt"]
-        created_at = datetime.fromisoformat(created_at_str.replace("Z", "+00:00"))
+        created_at = datetime.fromisoformat(created_at_str)
 
         if created_at > self._last_checked:
             author = comment["author"]["login"]
@@ -145,8 +146,7 @@ class GithubAdapter:
             )
 
             # Update temporary newest timestamp
-            if created_at > newest_timestamp:
-                newest_timestamp = created_at
+            newest_timestamp = max(newest_timestamp, created_at)
 
             # Handle the comment asynchronously
             asyncio.create_task(
@@ -216,10 +216,11 @@ class GithubAdapter:
             ]
             # Actually, gh api needs the full repo or we let it find it.
             # Better to use a reliable format:
-            repo_result = subprocess.run(
+            repo_result = subprocess.run(  # noqa: ASYNC221
                 ["gh", "repo", "view", "--json", "owner,name"],
                 capture_output=True,
                 text=True,
+                check=False,
             )
             if repo_result.returncode == 0:
                 repo_data = json.loads(repo_result.stdout)
@@ -243,12 +244,12 @@ class GithubAdapter:
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
             )
-            stdout, stderr = await process.communicate()
+            _stdout, stderr = await process.communicate()
             if process.returncode != 0:
                 logger.error(f"gh comment failed: {stderr.decode()}")
             else:
                 logger.info(
                     f"Posted response to PR #{self._pr_number} (reply={bool(reply_to_id)})"
                 )
-        except Exception as e:
+        except OSError as e:
             logger.error(f"Failed to post comment to GitHub: {e}")

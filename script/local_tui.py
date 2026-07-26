@@ -14,8 +14,8 @@ Usage:
 import argparse
 import asyncio
 import logging
-import sys
 import os
+import sys
 
 from aioconsole import ainput
 

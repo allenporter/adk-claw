@@ -1,8 +1,9 @@
 """Tests for Discord cancellation via 🛑 reaction."""
 
-import pytest
-from unittest.mock import AsyncMock, MagicMock, patch, PropertyMock
+from unittest.mock import AsyncMock, MagicMock, PropertyMock, patch
+
 import discord
+import pytest
 
 from adk_claw.gateway.discord import DiscordAdapter
 

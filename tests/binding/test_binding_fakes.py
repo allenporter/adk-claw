@@ -1,5 +1,7 @@
 import pytest
+
 from adk_claw.binding.fakes import InMemoryBindingTable
+from adk_claw.binding.table import WorkspaceContext
 
 
 @pytest.mark.asyncio
@@ -18,8 +20,6 @@ async def test_in_memory_binding_table_jit():
 @pytest.mark.asyncio
 async def test_update_binding():
     table = InMemoryBindingTable()
-    from adk_claw.binding.table import WorkspaceContext
-
     new_context = WorkspaceContext(workspace_id="manual-id", metadata={"foo": "bar"})
     await table.update_binding("slack", "C123", "U456", new_context)
 

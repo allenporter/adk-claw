@@ -32,7 +32,7 @@ class ProgressTracker:
         self,
         channel: discord.abc.Messageable,
         lane_key: str | None = None,
-        adapter: "DiscordAdapter" | None = None,
+        adapter: DiscordAdapter | None = None,
     ) -> None:
         self._channel = channel
         self._lane_key = lane_key
@@ -121,7 +121,7 @@ class ProgressTracker:
                             )
                         try:
                             await self._current_message.add_reaction("🛑")
-                        except Exception:
+                        except Exception:  # noqa: BLE001, S110
                             pass
                     except discord.errors.HTTPException as e:
                         if e.code == 50035:
@@ -133,7 +133,7 @@ class ProgressTracker:
                                 self._current_message = await self._channel.send(
                                     tiny_chunk
                                 )
-                            except Exception:
+                            except Exception:  # noqa: BLE001, S110
                                 pass
                         else:
                             logger.exception("Failed to send initial large chunk")
@@ -158,7 +158,7 @@ class ProgressTracker:
                         )
                     try:
                         await self._current_message.add_reaction("🛑")
-                    except Exception:
+                    except Exception:  # noqa: BLE001
                         logger.debug("Could not add reaction to message")
                 else:
                     # Edit existing message
@@ -304,7 +304,7 @@ class DiscordAdapter:
                     target_channel = await message.create_thread(
                         name=thread_name, auto_archive_duration=60
                     )
-                except Exception:
+                except Exception:  # noqa: BLE001
                     logger.warning("Failed to create thread, falling back to channel")
                     target_channel = message.channel
 
