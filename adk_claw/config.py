@@ -58,7 +58,7 @@ def _load_yaml(path: Path) -> dict[str, Any]:
         text = path.read_text(encoding="utf-8")
         data = yaml.safe_load(text)
         return data if isinstance(data, dict) else {}
-    except Exception as e:
+    except (OSError, yaml.YAMLError) as e:
         logger.warning("Failed to load config from %s: %s", path, e)
         return {}
 

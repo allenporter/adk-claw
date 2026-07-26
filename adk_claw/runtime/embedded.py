@@ -12,18 +12,18 @@ from collections.abc import AsyncIterator
 from pathlib import Path
 from typing import Any
 
-from google.genai import types as genai_types
-
 from adk_coder.agent_factory import build_runner
 from adk_coder.projects import find_project_root, get_project_id
 from adk_coder.summarize import summarize_tool_call
+from google.genai import types as genai_types
+
 from adk_claw.domain.models import EventType, OrchestratorEvent
 from adk_claw.memory import load_memory_context
 from adk_claw.runtime.mcp_support import McpSupport
 from adk_claw.workspace_init import (
+    assemble_instructions,
     initialize_global_brain,
     initialize_session_workspace,
-    assemble_instructions,
 )
 
 logger = logging.getLogger(__name__)
@@ -119,14 +119,13 @@ class EmbeddedRuntime:
                     yield OrchestratorEvent(type=EventType.THOUGHT, content=summary)
 
                 # Stream final response
-                if event.is_final_response():
-                    if event.content and event.content.parts:
-                        text_parts = [p.text for p in event.content.parts if p.text]
-                        if text_parts:
-                            yield OrchestratorEvent(
-                                type=EventType.TOKEN,
-                                content="\n".join(text_parts),
-                            )
+                if event.is_final_response() and event.content and event.content.parts:
+                    text_parts = [p.text for p in event.content.parts if p.text]
+                    if text_parts:
+                        yield OrchestratorEvent(
+                            type=EventType.TOKEN,
+                            content="\n".join(text_parts),
+                        )
 
         except Exception as e:
             logger.exception("Agent execution failed")

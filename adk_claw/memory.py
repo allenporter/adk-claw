@@ -3,7 +3,7 @@ Cross-session memory store for adk-claw agents.
 """
 
 import logging
-from datetime import date as dt_date, timedelta
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 from adk_claw.config import GLOBAL_CONFIG_DIR
@@ -22,7 +22,7 @@ def _read_summary(path: Path, max_chars: int = 500) -> str:
         if len(content) > max_chars:
             summary += "..."
         return summary
-    except Exception:
+    except (OSError, UnicodeDecodeError):
         return ""
 
 
@@ -52,7 +52,7 @@ async def load_memory_context(workspace_path: Path) -> str:
         sections.append("### Tier 1: Global Brain\n" + "\n".join(found_global))
 
     # 2. Check for recent journals in Tier 1
-    today = dt_date.today()
+    today = datetime.now(UTC).date()
     yesterday = today - timedelta(days=1)
 
     found_journals = []

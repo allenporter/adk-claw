@@ -35,7 +35,6 @@ class BindingTable(ABC):
         Maps a (Protocol, Channel, Author) triplet to a WorkspaceContext.
         Should handle JIT provisioning if no binding exists.
         """
-        pass
 
     @abstractmethod
     async def update_binding(
@@ -44,4 +43,3 @@ class BindingTable(ABC):
         """
         Updates or creates a binding.
         """
-        pass

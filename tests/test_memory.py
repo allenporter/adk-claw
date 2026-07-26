@@ -1,8 +1,10 @@
 """Tests for load_memory_context bootstrapping."""
 
-import pytest
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from datetime import date as dt_date, timedelta
+
+import pytest
+
 from adk_claw.memory import load_memory_context
 
 
@@ -44,7 +46,7 @@ async def test_load_journals(tmp_path: Path, global_dir: Path) -> None:
     memory_dir = global_dir / "memory"
     memory_dir.mkdir()
 
-    today = dt_date.today()
+    today = datetime.now(UTC).date()
     yesterday = today - timedelta(days=1)
     old = today - timedelta(days=5)
 

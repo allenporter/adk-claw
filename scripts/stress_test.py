@@ -2,8 +2,10 @@ import asyncio
 import logging
 import sys
 from pathlib import Path
-from adk_claw.host.host import ClawHost
+
+from adk_claw.config import AgentConfig, ClawConfig
 from adk_claw.domain.models import EventType
+from adk_claw.host.host import ClawHost
 
 # Configure logging to see the lane-based queuing in action
 logging.basicConfig(
@@ -48,8 +50,6 @@ async def main():
     workspace.mkdir(exist_ok=True)
 
     # Initialize Host
-    from adk_claw.config import ClawConfig, AgentConfig
-
     # Use gemini-2.5-flash which is confirmed to exist and be stable
     config = ClawConfig(agent=AgentConfig(model="gemini-2.5-flash"))
     host = ClawHost(workspace_path=str(workspace), config=config)

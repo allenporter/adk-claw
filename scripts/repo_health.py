@@ -7,8 +7,9 @@ Polls GitHub for CI status, PR age, and Issue counts to generate a health summar
 import json
 import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
+
 import yaml
 
 
@@ -19,7 +20,7 @@ def run_gh(args):
         + args
         + ["--json", "name,url,isArchived,pushedAt,repositoryTopics", "--limit", "300"]
     )
-    result = subprocess.run(cmd, capture_output=True, text=True)
+    result = subprocess.run(cmd, capture_output=True, text=True, check=False)
     if result.returncode != 0:
         print(f"Error running gh: {result.stderr}", file=sys.stderr)
         return []
@@ -39,13 +40,15 @@ def get_repo_details(repo_full_name):
         "number,title,updatedAt,isDraft,author,reviewDecision",
     ]
     prs = json.loads(
-        subprocess.run(pr_cmd, capture_output=True, text=True).stdout or "[]"
+        subprocess.run(pr_cmd, capture_output=True, text=True, check=False).stdout
+        or "[]"
     )
 
     # Check last CI run
     ci_cmd = ["gh", "api", f"repos/{repo_full_name}/actions/runs?per_page=1"]
     ci_data = json.loads(
-        subprocess.run(ci_cmd, capture_output=True, text=True).stdout or "{}"
+        subprocess.run(ci_cmd, capture_output=True, text=True, check=False).stdout
+        or "{}"
     )
     last_run = ci_data.get("workflow_runs", [{}])[0]
 
@@ -73,14 +76,14 @@ def main():
     report = []
     report.append("# Repository Health Dashboard")
     report.append(
-        f"**Last Updated**: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}\n"
+        f"**Last Updated**: {datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S UTC')}\n"
     )
     report.append(
         "| Repository | CI Status | Open PRs | Priority Action | Your Stale | Total Stale |"
     )
     report.append("| :--- | :--- | :--- | :--- | :--- | :--- |")
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     for repo_name in target_repos:
         full_name = f"{owner}/{repo_name}"
         details = get_repo_details(full_name)
@@ -103,7 +106,7 @@ def main():
         for pr in details["prs"]:
             is_draft = pr.get("isDraft")
             author = pr.get("author", {}).get("login")
-            updated_at = datetime.fromisoformat(pr["updatedAt"].replace("Z", "+00:00"))
+            updated_at = datetime.fromisoformat(pr["updatedAt"])
             days_old = (now - updated_at).days
             review_decision = pr.get("reviewDecision")
 

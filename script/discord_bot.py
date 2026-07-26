@@ -15,8 +15,8 @@ import logging
 import os
 import sys
 
-from adk_claw.host.host import ClawHost
 from adk_claw.gateway.discord import DiscordAdapter
+from adk_claw.host.host import ClawHost
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(name)s] %(message)s")
 logger = logging.getLogger("claw.discord")

@@ -6,15 +6,15 @@ Polls a GitHub PR for comments and responds to them.
 Requires gh CLI to be authenticated.
 """
 
-import asyncio
 import argparse
+import asyncio
 import logging
 import sys
 from pathlib import Path
 
 from adk_claw.config import load_config
-from adk_claw.host.host import ClawHost
 from adk_claw.gateway.github import GithubAdapter
+from adk_claw.host.host import ClawHost
 
 logging.basicConfig(
     level=logging.INFO,
