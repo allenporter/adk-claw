@@ -1,5 +1,7 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock
+
+import pytest
+
 from adk_claw.domain.models import EventType
 from adk_claw.gateway.discord import ProgressTracker
 

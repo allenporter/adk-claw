@@ -3,7 +3,7 @@ from collections.abc import AsyncIterator
 from typing import Any
 
 from adk_claw.domain.models import OrchestratorEvent
-from adk_claw.host.queue.lane import LaneQueue, ExecutionFunc
+from adk_claw.host.queue.lane import ExecutionFunc, LaneQueue
 
 logger = logging.getLogger(__name__)
 

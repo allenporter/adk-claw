@@ -5,8 +5,8 @@ Automatically sets up the Tier 1 Global Brain and Tier 2 Session Workspaces.
 """
 
 import logging
-from pathlib import Path
 from importlib import resources
+from pathlib import Path
 
 from adk_claw.config import GLOBAL_CONFIG_DIR
 
@@ -28,7 +28,7 @@ def _get_starter_content(filename: str) -> str:
             filename
         )
         return resource_path.read_text(encoding="utf-8")
-    except Exception as e:
+    except OSError as e:
         logger.warning(f"Failed to load resource {filename}: {e}")
         return ""
 
@@ -54,7 +54,7 @@ def initialize_global_brain() -> None:
                 try:
                     file_path.write_text(content, encoding="utf-8")
                     logger.debug(f"Created global {filename}")
-                except Exception as e:
+                except OSError as e:
                     logger.warning(f"Failed to create {filename}: {e}")
 
 
@@ -78,7 +78,7 @@ def initialize_session_workspace(workspace_path: Path) -> None:
                 encoding="utf-8",
             )
             logger.debug("Created SESSION.md scratchpad")
-        except Exception as e:
+        except OSError as e:
             logger.warning(f"Failed to create SESSION.md: {e}")
 
 
@@ -98,7 +98,7 @@ def assemble_instructions(workspace_path: Path) -> str:
                     project_instructions.append(
                         f"\n--- From Global {marker} ---\n{content}"
                     )
-            except Exception as e:
+            except OSError as e:
                 logger.warning("Failed to read %s: %s", marker, e)
 
     # 2. Load Tier 2 Session Scratchpad
@@ -110,7 +110,7 @@ def assemble_instructions(workspace_path: Path) -> str:
                 project_instructions.append(
                     f"\n--- From Session SESSION.md ---\n{content}"
                 )
-        except Exception as e:
+        except OSError as e:
             logger.warning("Failed to read session cache: %s", e)
 
     # 3. Load Project-specific Agents/Tools if they exist at workspace root
@@ -121,7 +121,7 @@ def assemble_instructions(workspace_path: Path) -> str:
                 content = marker_path.read_text(encoding="utf-8").strip()
                 if content:
                     project_instructions.append(f"\n--- From {marker} ---\n{content}")
-            except Exception:
+            except OSError:
                 pass
 
     return "\n\n## System Instructions\n" + "\n".join(project_instructions)
@@ -143,7 +143,7 @@ def get_subagent_instructions(workspace_path: Path) -> str:
                     project_instructions.append(
                         f"\n--- From Global {marker} ---\n{content}"
                     )
-            except Exception:
+            except OSError:
                 pass
 
     # Subagents get AGENTS.md and TOOLS.md for specialized focus from workspace
@@ -155,7 +155,7 @@ def get_subagent_instructions(workspace_path: Path) -> str:
                 content = marker_path.read_text(encoding="utf-8").strip()
                 if content:
                     project_instructions.append(f"\n--- From {marker} ---\n{content}")
-            except Exception as e:
+            except OSError as e:
                 logger.warning("Failed to read %s: %s", marker, e)
 
     return "\n\n## Project-Specific Instructions\n" + "\n".join(project_instructions)

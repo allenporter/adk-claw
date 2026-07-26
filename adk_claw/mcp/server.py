@@ -1,3 +1,5 @@
+import asyncio
+
 """
 Host-side MCP Server — Tool Hydration Layer.
 
@@ -39,27 +41,33 @@ def create_mcp_server(
     @mcp.tool()
     async def git_info() -> str:
         """Get git status for the current workspace (branch, recent commits)."""
-        branch_res = subprocess.run(
+        branch_res = await asyncio.to_thread(
+            subprocess.run,
             ["git", "branch", "--show-current"],
             cwd=workspace_path,
             capture_output=True,
             text=True,
+            check=False,
         )
         branch = branch_res.stdout.strip() or "detached HEAD"
 
-        log_res = subprocess.run(
+        log_res = await asyncio.to_thread(
+            subprocess.run,
             ["git", "log", "--oneline", "-5"],
             cwd=workspace_path,
             capture_output=True,
             text=True,
+            check=False,
         )
         recent = log_res.stdout.strip() or "No commits"
 
-        status_res = subprocess.run(
+        status_res = await asyncio.to_thread(
+            subprocess.run,
             ["git", "status", "--short"],
             cwd=workspace_path,
             capture_output=True,
             text=True,
+            check=False,
         )
         status = status_res.stdout.strip() or "Clean"
 
@@ -85,13 +93,20 @@ def create_mcp_server(
 
         # Resolve "current" repo from workspace git remote
         if resolved_repo == "current":
-            res = subprocess.run(
+            res = await asyncio.to_thread(
+                subprocess.run,
                 ["git", "remote", "get-url", "origin"],
                 cwd=workspace_path,
                 capture_output=True,
                 text=True,
+                check=False,
             )
-            remote_url = res.stdout.strip()
+            raw_url = (
+                res.stdout.decode()
+                if isinstance(res.stdout, bytes)
+                else str(res.stdout)
+            )
+            remote_url = raw_url.strip()
             # Parse owner/repo from git URL
             if "github.com" in remote_url:
                 # Handle both SSH and HTTPS URLs
@@ -133,7 +148,7 @@ def create_mcp_server(
             # The host/TUI will handle prompting the user
             try:
                 approved = await approval_callback(action, risk_level)
-            except Exception as e:
+            except (RuntimeError, ValueError) as e:
                 return f"Approval request failed: {e}"
             status = "approved" if approved else "denied"
         else:

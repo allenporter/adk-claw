@@ -1,8 +1,9 @@
 """Tests for ClawHost."""
 
-import pytest
 from collections.abc import AsyncIterator
 from typing import Any
+
+import pytest
 
 from adk_claw.config import AgentConfig, ClawConfig
 from adk_claw.domain.models import EventType, OrchestratorEvent

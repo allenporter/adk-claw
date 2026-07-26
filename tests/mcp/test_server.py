@@ -1,9 +1,9 @@
 """Tests for the Claw MCP server tools (FastMCP pattern)."""
 
 import os
+from unittest.mock import AsyncMock
 
 import pytest
-from unittest.mock import AsyncMock
 
 from adk_claw.mcp.server import create_mcp_server
 

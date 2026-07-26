@@ -1,5 +1,6 @@
-import aiosqlite
 import json
+
+import aiosqlite
 
 from adk_claw.domain.models import WorkspaceContext
 
@@ -33,19 +34,21 @@ class SQLiteBindingTable(BindingTable):
     async def resolve_workspace(
         self, protocol: str, channel_id: str, author_id: str
     ) -> WorkspaceContext:
-        async with aiosqlite.connect(self.db_path) as db:
-            async with db.execute(
+        async with (
+            aiosqlite.connect(self.db_path) as db,
+            db.execute(
                 "SELECT workspace_id, pvc_name, auth_profile, metadata FROM bindings WHERE protocol = ? AND channel_id = ? AND author_id = ?",
                 (protocol, channel_id, author_id),
-            ) as cursor:
-                row = await cursor.fetchone()
-                if row:
-                    return WorkspaceContext(
-                        workspace_id=row[0],
-                        pvc_name=row[1],
-                        auth_profile=json.loads(row[2]),
-                        metadata=json.loads(row[3]),
-                    )
+            ) as cursor,
+        ):
+            row = await cursor.fetchone()
+            if row:
+                return WorkspaceContext(
+                    workspace_id=row[0],
+                    pvc_name=row[1],
+                    auth_profile=json.loads(row[2]),
+                    metadata=json.loads(row[3]),
+                )
 
         # JIT Provisioning (Mock for now, returns a default)
         workspace_id = f"ws-{protocol}-{author_id}"

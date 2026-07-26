@@ -1,10 +1,12 @@
-import pytest
 import asyncio
 import json
-from unittest.mock import MagicMock, AsyncMock, patch
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
+
+from adk_claw.domain.models import EventType, OrchestratorEvent
 from adk_claw.gateway.github import GithubAdapter
-from adk_claw.domain.models import OrchestratorEvent, EventType
 
 
 @pytest.mark.asyncio
@@ -20,7 +22,7 @@ async def test_github_adapter_poll_review_comment():
     adapter = GithubAdapter(
         host=mock_host, pr_number=123, allowed_authors=["user1"], interval=1
     )
-    adapter._last_checked = datetime(2020, 1, 1, tzinfo=timezone.utc)
+    adapter._last_checked = datetime(2020, 1, 1, tzinfo=UTC)
 
     # Mock gh pr view with a review comment
     mock_data = {
