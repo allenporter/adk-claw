@@ -148,7 +148,7 @@ async def execute_tool_calls(self, tool_calls: list[ToolCall]) -> None:
         # Check steer queue at tool boundary
         steer_msg = self.check_steer_queue()
         if steer_msg:
-            skipped = tool_calls[tool_calls.index(tool_call) + 1:]
+            skipped = tool_calls[tool_calls.index(tool_call) + 1 :]
             self.log_skipped_tools(skipped, reason="steered")
             self.inject_user_message(steer_msg)
             return  # Break out; LLM loop resumes with new context

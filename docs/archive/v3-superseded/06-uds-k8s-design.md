@@ -55,12 +55,14 @@ spec:
 import asyncio
 import os
 
+
 async def handle_client(reader, writer):
     data = await reader.read(100)
     # Process A2A Protocol message...
     writer.write(b"ACK")
     await writer.drain()
     writer.close()
+
 
 async def main():
     socket_path = os.getenv("SOCKET_PATH", "/rpc/worker.sock")
@@ -73,6 +75,7 @@ async def main():
 ```python
 import asyncio
 import os
+
 
 async def send_task(message):
     socket_path = os.getenv("SOCKET_PATH", "/rpc/worker.sock")
