@@ -17,7 +17,7 @@ aioconsole==0.8.2
 a2a-sdk==1.1.2
 uvicorn==0.52.4
 starlette==0.52.1
-mcp==1.29.1
+mcp==2.1.1
 aiosqlite==0.22.1
 google-adk==1.36.2
 adk-coder==0.1.4
