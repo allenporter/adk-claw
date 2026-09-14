@@ -15,7 +15,7 @@ pydantic==2.13.5
 discord-py==2.7.1
 aioconsole==0.8.2
 a2a-sdk==1.1.2
-uvicorn==0.52.4
+uvicorn==0.53.0
 starlette==0.52.1
 mcp==1.30.0
 aiosqlite==0.22.1
