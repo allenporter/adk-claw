@@ -9,7 +9,7 @@ pytest==9.1.1
 ruff==0.17.2
 
 # Pinned development versions
-pytest-asyncio==1.4.0
+pytest-asyncio==1.4.1
 pydantic==2.14.1
 
 discord-py==2.7.1
