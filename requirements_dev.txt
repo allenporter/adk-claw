@@ -10,7 +10,7 @@ ruff==0.17.3
 
 # Pinned development versions
 pytest-asyncio==1.4.1
-pydantic==2.14.1
+pydantic==2.14.2
 
 discord-py==2.7.1
 aioconsole==0.8.2
